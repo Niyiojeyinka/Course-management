@@ -72,4 +72,21 @@ class UserTest extends TestCase
         $response->assertJSON(['result' => 0]);
         $response->assertStatus(401);
     }
+
+    /** @test @return void */
+    public function user_can_logout()
+    {
+        $this->register();
+        $response = $this->post($this->baseURL . 'login', [
+            'email' => 'test@email.com',
+            'password' => 'testpassword',
+        ]);
+
+        $logout = $this->post($this->baseURL . 'logout', [
+            'token' => $response['data']['token'],
+        ]);
+
+        $logout->assertJSON(['result' => 1]);
+        $logout->assertOk();
+    }
 }
