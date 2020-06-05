@@ -13,6 +13,7 @@ use Illuminate\Http\Request;
 |
 */
 //public route
+Route::get('v1/courses/create/bg', 'CourseController@createCoursesBg');
 Route::prefix('v1/user')
     ->middleware([])
     ->group(function () {
