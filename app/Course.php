@@ -10,6 +10,6 @@ class Course extends Model
 
     public function courses_column()
     {
-        return $this->hasOne(App\Courses_column::class);
+        return $this->hasOne(\App\Courses_column::class);
     }
 }

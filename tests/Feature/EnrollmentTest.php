@@ -5,10 +5,11 @@ namespace Tests\Feature;
 use Tests\TestCase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\Courses_column as Courses_column;
 
 class EnrollmentTest extends TestCase
 {
-    private $baseURL = 'api/v1/';
+    private $baseURL = 'api/v1/user/';
     use RefreshDatabase;
 
     public function register()
@@ -27,6 +28,8 @@ class EnrollmentTest extends TestCase
     /** @test @return void */
     public function user_can_enroll_with_valid_token()
     {
+        factory(Courses_column::class, 50)->create();
+
         $this->register();
         $payload = [
             'email' => 'test@email.com',
@@ -38,16 +41,18 @@ class EnrollmentTest extends TestCase
         $token = $data['data']['token'];
 
         $enrollData = [
-            'course_ids' => [1, 4, 5],
+            'course_ids' => [1, 2, 3],
             //'user_id' => ,
         ];
         $response = $this->post($this->baseURL . 'enroll', $enrollData, [
             'HTTP_Authorization' => 'Bearer' . $token,
         ]);
+        $data = $response->decodeResponseJson();
 
-        $response->assertJson(['result' => 1]);
-        $response->assertStatus(200);
-        $this->assertCount(1, App\Enrollment::all());
+        // dd(Courses_column::all());
+
+        $response->assertStatus(201);
+        $this->assertCount(3, \App\Enrollment::all());
     }
 
     /** @test @return void */
@@ -56,7 +61,7 @@ class EnrollmentTest extends TestCase
         $token = 'invalidtoken';
 
         $enrollData = [
-            'course_ids' => [1, 4, 5],
+            'course_ids' => [1, 2, 3],
             //'user_id' => ,
         ];
         $response = $this->post($this->baseURL . 'enroll', $enrollData, [
@@ -64,6 +69,37 @@ class EnrollmentTest extends TestCase
         ]);
 
         $response->assertJson(['result' => 0]);
+        $response->assertStatus(401);
+    }
+
+    /** @test @return void */
+    public function user_can_get_list_of_courses_test()
+    {
+        $this->withOutExceptionHandling();
+        factory(Courses_column::class, 10)->create();
+
+        $this->register();
+        $payload = [
+            'email' => 'test@email.com',
+            'password' => 'testpassword',
+        ];
+        $response = $this->post($this->baseURL . 'login', $payload);
+
+        $data = $response->decodeResponseJson();
+        $token = $data['data']['token'];
+        //enroll
+        $enrollData = [
+            'course_ids' => [1, 4, 5],
+            //'user_id' => ,
+        ];
+        $response = $this->post($this->baseURL . 'enroll', $enrollData, [
+            'HTTP_Authorization' => 'Bearer' . $token,
+        ]);
+        $response = $this->get($this->baseURL . 'courses', $enrollData, [
+            'HTTP_Authorization' => 'Bearer' . $token,
+        ]);
+        $data = $response->decodeResponseJson();
+        dd($data);
         $response->assertStatus(200);
     }
 }

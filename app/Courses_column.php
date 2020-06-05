@@ -11,6 +11,6 @@ class Courses_column extends Model
 
     public function course()
     {
-        return $this->belongsTo(App\Course::class);
+        return $this->belongsTo(\App\Course::class);
     }
 }

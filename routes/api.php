@@ -21,6 +21,9 @@ Route::prefix('v1/user')
         Route::post('logout', 'UserAuthController@logout');
         Route::post('login', 'UserAuthController@login');
     });
-Route::middleware('auth:api')->get('/user', function (Request $request) {
-    return $request->user();
-});
+Route::prefix('v1/user')
+    ->middleware('auth:api')
+    ->group(function () {
+        Route::post('enroll', 'EnrollmentController@enroll');
+        Route::get('courses', 'CourseController@get_courses');
+    });
