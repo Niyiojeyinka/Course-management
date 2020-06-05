@@ -144,6 +144,14 @@ class Handler extends ExceptionHandler
             );
         }
 
+        /*return response()->json(
+            [
+                'result' => 0,
+                'error' => $exception->getMessage(),
+                'data' => [],
+            ]
+            //$exception->getStatusCode()
+        );*/
         return parent::render($request, $exception);
     }
 
