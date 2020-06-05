@@ -9,7 +9,7 @@ use App\User as User;
 
 class UserTest extends TestCase
 {
-    private $baseURL = 'api/user/';
+    private $baseURL = 'api/v1/user/';
     use RefreshDatabase;
 
     public function register()
@@ -35,13 +35,13 @@ class UserTest extends TestCase
     }
 
     /** @test @return void */
-    public function email_and_username_are_unique()
+    public function email_is_unique()
     {
         $response = $response = $this->register();
 
         $response = $response = $this->register();
 
-        $response->assertStatus(200);
+        $response->assertStatus(400);
         $response->assertJSON(['result' => 0]);
         $this->assertCount(1, User::all());
     }
@@ -77,14 +77,19 @@ class UserTest extends TestCase
     public function user_can_logout()
     {
         $this->register();
-        $response = $this->post($this->baseURL . 'login', [
+        $payload = [
             'email' => 'test@email.com',
             'password' => 'testpassword',
-        ]);
+        ];
+        $response = $this->post($this->baseURL . 'login', $payload);
 
-        $logout = $this->post($this->baseURL . 'logout', [
-            'token' => $response['data']['token'],
-        ]);
+        $data = $response->decodeResponseJson();
+        $token = $data['data']['token'];
+        $logout = $this->post(
+            $this->baseURL . 'logout',
+            [],
+            ['HTTP_Authorization' => 'Bearer' . $token]
+        );
 
         $logout->assertJSON(['result' => 1]);
         $logout->assertOk();
