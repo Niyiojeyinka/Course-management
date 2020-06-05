@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 Route::prefix('v1/user')
     ->middleware([])
     ->group(function () {
-        Route::post('register', 'UserAuthController@create');
+        Route::post('register', 'UserAuthController@register');
         Route::post('logout', 'UserAuthController@logout');
         Route::post('login', 'UserAuthController@login');
     });

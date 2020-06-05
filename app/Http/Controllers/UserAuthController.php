@@ -8,10 +8,12 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Validator;
+use App\Http\Requests\RegisterRequest;
+use App\Http\Requests\LoginRequest;
 
-class UserController extends Controller
+class UserAuthController extends Controller
 {
-    public function create(RegisterRequest $request)
+    public function register(RegisterRequest $request)
     {
         /*name
         email
@@ -75,7 +77,7 @@ class UserController extends Controller
         );
     }
 
-    public function logout()
+    public function logout(Request $request)
     {
         auth()->logout();
 
