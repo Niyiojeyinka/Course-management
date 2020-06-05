@@ -2,15 +2,17 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
-use App\Jobs\PopulateCourses;
-use App\Courses;
-use App\Courses_column;
-use App\Enrollment;
-use App\Http\Controllers\Controller;
 use Auth;
+use App\Courses;
+use App\Enrollment;
+use App\Courses_column;
+use Illuminate\Http\Request;
 use App\Exports\CoursesExports;
+use Illuminate\Support\Facades\Log;
+use App\Events\PopulateCoursesEvent;
+use App\Http\Controllers\Controller;
 use Maatwebsite\Excel\Facades\Excel;
+use App\Jobs\PopulateCourses as PopulateCourses;
 
 class CourseController extends Controller
 {
@@ -21,7 +23,12 @@ class CourseController extends Controller
     **/
     public function createCoursesBg()
     {
-        dispatch(new PopulateCourses());
+        //dispatch(new PopulateCourses());
+
+        //PopulateCourses::dispatch()->delay(now()->addMinutes(1));
+
+        event(new PopulateCoursesEvent());
+
         return response()->json(
             [
                 'result' => 1,
