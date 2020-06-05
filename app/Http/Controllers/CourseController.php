@@ -9,6 +9,8 @@ use App\Courses_column;
 use App\Enrollment;
 use App\Http\Controllers\Controller;
 use Auth;
+use App\Exports\CoursesExports;
+use Maatwebsite\Excel\Facades\Excel;
 
 class CourseController extends Controller
 {
@@ -30,12 +32,8 @@ class CourseController extends Controller
             200
         );
     }
-    /**
-     * @description  method that create test courses of 50 in quantity in background
-     * @return json
 
-    **/
-    public function get_courses()
+    public function return_courses()
     {
         $courses = Courses_column::with('course')->get();
         $return_courses = [];
@@ -67,10 +65,27 @@ class CourseController extends Controller
                 ]);
             }
         }
+        return $return_courses;
+    }
 
+    /**
+     * @description  method that create test courses of 50 in quantity in background
+     * @return json
+
+    **/
+    public function get_courses()
+    {
         return response()->json(
-            ['result' => 1, 'data' => ['courses' => $return_courses]],
+            [
+                'result' => 1,
+                'data' => ['courses' => $this->return_courses()],
+            ],
             200
         );
+    }
+
+    public function downloadExcel()
+    {
+        return Excel::download(new CoursesExports(), 'courses.xlsx');
     }
 }

@@ -99,7 +99,7 @@ class EnrollmentTest extends TestCase
             'HTTP_Authorization' => 'Bearer' . $token,
         ]);
         $data = $response->decodeResponseJson();
-        dd($data);
+        //dd($data);
         $response->assertStatus(200);
     }
 }

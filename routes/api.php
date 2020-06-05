@@ -26,4 +26,5 @@ Route::prefix('v1/user')
     ->group(function () {
         Route::post('enroll', 'EnrollmentController@enroll');
         Route::get('courses', 'CourseController@get_courses');
+        Route::get('courses/csv/download', 'CourseController@downloadExcel');
     });
